@@ -23,7 +23,7 @@ function Set-RegistryValueForAllUsers {
         New-PSDrive -Name HKU -PSProvider Registry -Root Registry::HKEY_USERS | Out-Null
 
         ## Change the registry values for the currently logged on user. Each logged on user SID is under HKEY_USERS
-        $LoggedOnSids = $(Get-ChildItem HKU: | Where-Object { $_.Name -match 'S-\d-\d+-(\d+-){1,14}\d+$' } | foreach-object { $_.Name })
+        $LoggedOnSids = $(Get-ChildItem HKU: | Where-Object { $_.Name -match 'S-\d-\d+-(\d+-){1,14}\d+$' } | ForEach-Object { $_.Name })
         Write-Verbose "Found $($LoggedOnSids.Count) logged on user SIDs"
         foreach ($sid in $LoggedOnSids) {
             Write-Verbose -Message "Loading the user registry hive for the logged on SID $sid"
@@ -40,7 +40,7 @@ function Set-RegistryValueForAllUsers {
         ## Create the Active Setup registry key so that the reg add cmd will get ran for each user
         ## logging into the machine.
         ## http://www.itninja.com/blog/view/an-active-setup-primer
-        Write-Verbose "Setting Active Setup registry value to apply to all other users"
+        Write-Verbose 'Setting Active Setup registry value to apply to all other users'
         foreach ($instance in $RegistryInstance) {
             ## Generate a unique value (usually a GUID) to use for Active Setup
             $Guid = [guid]::NewGuid().Guid
@@ -87,6 +87,6 @@ function Set-RegistryValueForAllUsers {
     }
 }
 
-Set-RegistryValueForAllUsers -RegistryInstance @{'Name' = 'autosavebydefaultadminchoice'; 'Type' = 'decimal'; 'Value' = '2'; 'Path' = 'SOFTWARE\policies\microsoft\office\16.0\powerpoint'}
-Set-RegistryValueForAllUsers -RegistryInstance @{'Name' = 'autosavebydefaultadminchoice'; 'Type' = 'decimal'; 'Value' = '2'; 'Path' = 'SOFTWARE\policies\microsoft\office\16.0\excel'}
-Set-RegistryValueForAllUsers -RegistryInstance @{'Name' = 'autosavebydefaultadminchoice'; 'Type' = 'decimal'; 'Value' = '2'; 'Path' = 'SOFTWARE\policies\microsoft\office\16.0\word'}
+Set-RegistryValueForAllUsers -RegistryInstance @{'Name' = 'autosavebydefaultadminchoice'; 'Type' = 'decimal'; 'Value' = '2'; 'Path' = 'SOFTWARE\policies\microsoft\office\16.0\powerpoint' }
+Set-RegistryValueForAllUsers -RegistryInstance @{'Name' = 'autosavebydefaultadminchoice'; 'Type' = 'decimal'; 'Value' = '2'; 'Path' = 'SOFTWARE\policies\microsoft\office\16.0\excel' }
+Set-RegistryValueForAllUsers -RegistryInstance @{'Name' = 'autosavebydefaultadminchoice'; 'Type' = 'decimal'; 'Value' = '2'; 'Path' = 'SOFTWARE\policies\microsoft\office\16.0\word' }
